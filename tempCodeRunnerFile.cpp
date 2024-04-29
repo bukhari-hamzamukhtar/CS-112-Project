@@ -1,109 +1,96 @@
 #include <iostream>
-#include <fstream>
 #include <string>
 
 using namespace std;
 
-// Base class User
-class User
-{
+class User {
 protected:
     string username;
     string password;
-    string userType;
 
 public:
-    User(const string &username, const string &password, const string &userType)
-    {
-        this->username=username;
-        this->password=password;
-        this->userType=userType;
+    User(const string& username, const string& password) : username(username), password(password) {}
+
+    virtual void login() {
+        cout << "Logging in as " << username << endl;
     }
 
-    virtual void displayInfo() const
-    {
-        cout << "Username: " << username << "\nType: " << userType << endl;
-    }
-
-    virtual ~User() // Virtual destructor
-    {
-
-    } 
-
+    string getUsername() const { return username; } // Add a public getter for username
 };
 
-// Derived class Student
-class Student : public User
-{
+class Student : public User {
 public:
-    Student(const string &username, const string &password)
-        : User(username, password, "Student") {}
+    Student(const string& username, const string& password) : User(username, password) {}
 
-    void displayInfo() const override
-    {
-        cout << "Student Account\n";
-        User::displayInfo();
+    void enrollCourse(const string& courseName) {
+        cout << getUsername() << " enrolled in course: " << courseName << endl; // Use getUsername() to access username
     }
+
+    // Other functionalities specific to student can be added here
 };
 
-// Derived class Instructor
-class Instructor : public User
-{
+class Instructor : public User {
 public:
-    Instructor(const string &username, const string &password)
-        : User(username, password, "Instructor") {}
+    Instructor(const string& username, const string& password) : User(username, password) {}
 
-    void displayInfo() const override
-    {
-        cout << "Instructor Account\n";
-        User::displayInfo();
+    void createCourse(const string& courseName) {
+        cout << getUsername() << " created course: " << courseName << endl;
     }
+
+    // Other functionalities specific to instructor can be added here
 };
 
-// Derived class Administrator
-class Administrator : public User
-{
+class Administrator : public User {
 public:
-    Administrator(const string &username, const string &password)
-        : User(username, password, "Administrator") {}
+    Administrator(const string& username, const string& password) : User(username, password) {}
 
-    void displayInfo() const override
-    {
-        cout << "Administrator Account\n";
-        User::displayInfo();
+    void manageAccounts() {
+        cout << "Administrator managing accounts" << endl;
     }
+
+    // Other functionalities specific to administrator can be added here
 };
 
-// Function to create a new user
-User *createUser(const string &userType, const string &username, const string &password)
-{
-    if (userType == "Student")
-    {
-        return new Student(username, password);
-    }
-    else if (userType == "Instructor")
-    {
-        return new Instructor(username, password);
-    }
-    else if (userType == "Administrator")
-    {
-        return new Administrator(username, password);
-    }
-    else
-    {
-        return nullptr;
-    }
-}
+class Course {
+private:
+    string courseName;
+    string instructor;
+    string description;
+    string enrolledStudents[100]; // Array to store enrolled student usernames (assuming maximum 100 students)
 
-int main()
-{
-    // Example usage:
-    User *newUser = createUser("Administrator", "admin_user", "securepass");
-    if (newUser)
-    {
-        newUser->displayInfo();
-        delete newUser; // Remember to deallocate memory
+public:
+    Course(const string& courseName, const string& instructor, const string& description)
+        : courseName(courseName), instructor(instructor), description(description) {}
+
+    void displayDetails() const {
+        cout << "Course: " << courseName << endl;
+        cout << "Instructor: " << instructor << endl;
+        cout << "Description: " << description << endl;
     }
+
+    void enrollStudent(Student& student) {
+        for (int i = 0; i < 100; ++i) {
+            if (enrolledStudents[i].empty()) {
+                enrolledStudents[i] = student.getUsername(); // Store the username of the enrolled student
+                cout << student.getUsername() << " enrolled in course: " << courseName << endl;
+                return;
+            }
+        }
+        cout << "Course is full. Cannot enroll student." << endl;
+    }
+
+    // Add methods for managing enrollment, accessing materials, etc. as needed
+};
+
+int main() {
+    // Example usage
+    Student student("student123", "password123");
+    student.login();
+
+    Course c1("Introduction to Programming", "Dr. Smith", "Learn the basics of programming");
+    c1.displayDetails();
+
+    c1.enrollStudent(student);
 
     return 0;
 }
