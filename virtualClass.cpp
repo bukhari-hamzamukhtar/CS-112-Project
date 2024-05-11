@@ -96,15 +96,15 @@ Course* Student::browseCourses(const Course courses[], int numCourses) {
 int main() {
     // Define the courses
     Course courses[] = {
-        Course("CS101", "Dr. Johnson", "Introduction to Computer Science"),
-        Course("CS112", "Prof. Smith", "Data Structures and Algorithms"),
-        Course("HM101", "Dr. Anderson", "Introduction to History"),
-        Course("HM102", "Prof. White", "World History"),
-        Course("MT101", "Dr. Brown", "Introduction to Mathematics"),
-        Course("MT102", "Prof. Green", "Calculus"),
-        Course("CH101", "Dr. Taylor", "Introduction to Chemistry"),
-        Course("CH161", "Prof. Martinez", "Organic Chemistry"),
-        Course("ES111", "Dr. Clark", "Introduction to Environmental Science")
+       Course("CS101", "Mr. Talha Ashfaq", "Introduction to Computer Science"),
+        Course("CS112", "Mr Qasim Riaz", "Data Structures and Algorithms"),
+        Course("HM101", "Mr Abrar", "Introduction to History"),
+        Course("HM102", "Ms Hira Ahad", "World History"),
+        Course("MT101", "Mr Fahad Zulfiqar", "Introduction to Mathematics"),
+        Course("MT102", "Mr Asif", "Calculus"),
+        Course("CH101", "Ms Nida", "Introduction to Chemistry"),
+        Course("CH161", "Ms Ramesha Tariq", "Organic Chemistry"),
+        Course("ES111", "Mr Fahad Zulfiqar", "Introduction to Environmental Science")
     };
 
     Student student("student123", "password123");
