@@ -3,8 +3,22 @@
 
 using namespace std;
 
-// Forward declaration of the Course class
-class Course;
+class Course {
+private:
+    string courseName;
+    string instructor;
+    string description;
+
+public:
+    Course(const string& courseName, const string& instructor, const string& description)
+        : courseName(courseName), instructor(instructor), description(description) {}
+
+    void displayDetails() const {
+        cout << "Course: " << courseName << endl;
+        cout << "Instructor: " << instructor << endl;
+        cout << "Description: " << description << endl;
+    }
+};
 
 class User {
 protected:
@@ -43,22 +57,6 @@ public:
     Course* browseCourses(const Course courses[], int numCourses);
 };
 
-class Course {
-private:
-    string courseName;
-    string instructor;
-    string description;
-
-public:
-    Course(const string& courseName, const string& instructor, const string& description)
-        : courseName(courseName), instructor(instructor), description(description) {}
-
-    void displayDetails() const {
-        cout << "Course: " << courseName << endl;
-        cout << "Instructor: " << instructor << endl;
-        cout << "Description: " << description << endl;
-    }
-};
 
 Course* Student::browseCourses(const Course courses[], int numCourses) {
     cout << "Available Courses:" << endl;
@@ -87,7 +85,7 @@ int main() {
         Course("HM102", "Ms Hira Ahad", "World History"),
         Course("MT101", "Mr Fahad Zulfiqar", "Introduction to Mathematics"),
         Course("MT102", "Mr Asif", "Calculus"),
-        Course("CH101", "Ms Nida", "Introduction to Chemistry"),
+        Course("CH101", "Ms Nida Zafar", "Introduction to Chemistry"),
         Course("CH161", "Ms Ramesha Tariq", "Organic Chemistry"),
         Course("ES111", "Mr Fahad Zulfiqar", "Introduction to Environmental Science")
     };
