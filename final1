@@ -1,0 +1,532 @@
+#include <iostream>
+#include <string>
+
+using namespace std;
+
+// Struct to represent a user
+struct User
+{
+    string username;
+    string password;
+};
+
+// Struct to represent a course
+struct Course
+{
+    string title;
+    string instructor;
+    int capacity;
+    int enrolled;
+};
+
+// Function prototypes
+void displayMenu();
+void addUser(User users[], int &userCount);
+void removeUser(User users[], int &userCount);
+void addCourse(Course courses[], int &courseCount);
+void removeCourse(Course courses[], int &courseCount);
+void displayUsers(const User users[], int userCount);
+void displayCourses(const Course courses[], int courseCount);
+
+int mainadmin()
+{
+    const int MAX_USERS = 10;
+    const int MAX_COURSES = 10;
+    User users[MAX_USERS];
+    Course courses[MAX_COURSES];
+    int userCount = 0;
+    int courseCount = 0;
+
+    // Initialize some users
+    users[userCount++] = {"Faheem Ahmad", "Giki@123"};
+    users[userCount++] = {"Sabahat Hussaain", "Admin@123"};
+
+    // Initialize some courses
+    courses[courseCount++] = {"MT102", "Fahad", 50, 47};
+    courses[courseCount++] = {"CS112", "Qasim", 40, 35};
+    courses[courseCount++] = {"HM102", "Hira", 45, 40};
+    courses[courseCount++] = {"MM101", "Shanza", 85, 40};
+
+    int choice;
+
+    cout << "Welcome, Administrator!" << endl;
+
+    do
+    {
+        displayMenu();
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // Clear the input buffer
+
+        switch (choice)
+        {
+        case 1:
+            addUser(users, userCount);
+            break;
+        case 2:
+            removeUser(users, userCount);
+            break;
+        case 3:
+            addCourse(courses, courseCount);
+            break;
+        case 4:
+            removeCourse(courses, courseCount);
+            break;
+        case 5:
+            displayUsers(users, userCount);
+            break;
+        case 6:
+            displayCourses(courses, courseCount);
+            break;
+        case 7:
+            cout << "Exiting the program." << endl;
+            break;
+        default:
+            cout << "Invalid choice. Please enter a number between 1 and 7." << endl;
+        }
+    } while (choice != 7);
+
+    return 0;
+}
+
+// Function to display the menu
+void displayMenu()
+{
+    cout << "\n--- Menu ---" << endl;
+    cout << "1. Add a user" << endl;
+    cout << "2. Remove a user" << endl;
+    cout << "3. Add a course" << endl;
+    cout << "4. Remove a course" << endl;
+    cout << "5. Display user accounts" << endl;
+    cout << "6. Display course listings" << endl;
+    cout << "7. Exit" << endl;
+}
+
+// Function to add a user
+void addUser(User users[], int &userCount)
+{
+    if (userCount >= 10)
+    {
+        cout << "Cannot add more users. Maximum limit reached." << endl;
+        return;
+    }
+
+    User newUser;
+    cout << "Enter username: ";
+    getline(cin, newUser.username);
+    cout << "Enter password: ";
+    getline(cin, newUser.password);
+    users[userCount++] = newUser;
+    cout << "User added successfully." << endl;
+}
+
+// Function to remove a user
+void removeUser(User users[], int &userCount)
+{
+    string username;
+    cout << "Enter username of the user to remove: ";
+    getline(cin, username);
+    for (int i = 0; i < userCount; ++i)
+    {
+        if (users[i].username == username)
+        {
+            for (int j = i; j < userCount - 1; ++j)
+            {
+                users[j] = users[j + 1];
+            }
+            userCount--;
+            cout << "User " << username << " removed successfully." << endl;
+            return;
+        }
+    }
+    cout << "User not found." << endl;
+}
+
+// Function to add a course
+void addCourse(Course courses[], int &courseCount)
+{
+    if (courseCount >= 10)
+    {
+        cout << "Cannot add more courses. Maximum limit reached." << endl;
+        return;
+    }
+
+    Course newCourse;
+    cout << "Enter course title: ";
+    getline(cin, newCourse.title);
+    cout << "Enter instructor: ";
+    getline(cin, newCourse.instructor);
+    cout << "Enter capacity: ";
+    cin >> newCourse.capacity;
+    newCourse.enrolled = 0;
+    courses[courseCount++] = newCourse;
+    cout << "Course added successfully." << endl;
+    cin.ignore(); // Clear the input buffer
+}
+
+// Function to remove a course
+void removeCourse(Course courses[], int &courseCount)
+{
+    string title;
+    cout << "Enter the title of the course to remove: ";
+    getline(cin, title);
+    for (int i = 0; i < courseCount; ++i)
+    {
+        if (courses[i].title == title)
+        {
+            for (int j = i; j < courseCount - 1; ++j)
+            {
+                courses[j] = courses[j + 1];
+            }
+            courseCount--;
+            cout << "Course " << title << " removed successfully." << endl;
+            return;
+        }
+    }
+    cout << "Course not found." << endl;
+}
+
+// Function to display user accounts
+void displayUsers(const User users[], int userCount)
+{
+    cout << "\n--- User Accounts ---" << endl;
+    if (userCount == 0)
+    {
+        cout << "No user accounts found." << endl;
+    }
+    else
+    {
+        for (int i = 0; i < userCount; ++i)
+        {
+            cout << "Username: " << users[i].username << ", Password: " << users[i].password << endl;
+        }
+    }
+}
+
+// Function to display course listings
+void displayCourses(const Course courses[], int courseCount)
+{
+    cout << "\n--- Course Listings ---" << endl;
+    if (courseCount == 0)
+    {
+        cout << "No courses available." << endl;
+    }
+    else
+    {
+        for (int i = 0; i < courseCount; ++i)
+        {
+            cout << "Title: " << courses[i].title << ", Instructor: " << courses[i].instructor << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
+        }
+    }
+}
+
+//***********
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class CourseInstructor
+{
+private:
+    string courseName;
+    string subTopic;
+
+public:
+    void setCourseName(string name)
+    {
+        courseName = name;
+    }
+    string getCourseName()
+    {
+        return courseName;
+    }
+    void setSubTopic(string topic)
+    {
+        subTopic = topic;
+    }
+    string getSubTopic()
+    {
+        return subTopic;
+    }
+    void addContent()
+    {
+        cout << "Content added to " << courseName << " - " << subTopic << endl;
+    }
+};
+
+class StudentInstructor
+{
+private:
+    string name;
+    vector<string> assignments;
+    vector<string> grades;
+
+public:
+    StudentInstructor(string studentName) : name(studentName) {}
+
+    string getName()
+    {
+        return name;
+    }
+
+    void submitAssignment(string assignment)
+    {
+        assignments.push_back(assignment);
+    }
+
+    void receiveGrade(string assignment, string grade)
+    {
+        grades.push_back(grade);
+        cout << "Received grade " << grade << " for assignment " << assignment << endl;
+    }
+
+    vector<string> getAssignments()
+    {
+        return assignments;
+    }
+
+    vector<string> getGrades()
+    {
+        return grades;
+    }
+};
+
+class Instructor
+{
+private:
+    string name;
+    CourseInstructor course;
+    vector<StudentInstructor> students;
+
+public:
+    Instructor()
+    {
+        name = "";
+    }
+    void setName(string instructorName)
+    {
+        name = instructorName;
+    }
+    string getName()
+    {
+        return name;
+    }
+    void createCourseContent()
+    {
+        string courseChoices[8] = {"Basic Computer Science", "Object-Oriented Programming", "English", "Communications", "Calculus 1", "Calculus 2", "Chemistry", "Health"};
+        string subTopicChoices[5];
+        int choice;
+
+        cout << "Choose a course: " << endl;
+        for (int i = 0; i < 8; i++)
+        {
+            cout << i + 1 << ". " << courseChoices[i] << endl;
+        }
+        cin >> choice;
+        choice--;
+
+        if (choice < 0 || choice >= 8)
+        {
+            cout << "Invalid choice. Please choose a number between 1 and 8." << endl;
+            return;
+        }
+
+        course.setCourseName(courseChoices[choice]);
+
+        cout << "Enter subtopics (up to 5): " << endl;
+        if (course.getCourseName() == "Basic Computer Science")
+        {
+            subTopicChoices[0] = "Introduction to Programming";
+            subTopicChoices[1] = "Data Structures";
+            subTopicChoices[2] = "Algorithms";
+            subTopicChoices[3] = "Operating Systems";
+            subTopicChoices[4] = "Computer Networks";
+        }
+        else if (course.getCourseName() == "Object-Oriented Programming")
+        {
+            subTopicChoices[0] = "Introduction to Object-Oriented Programming";
+            subTopicChoices[1] = "Inheritance and Polymorphism";
+            subTopicChoices[2] = "Exception Handling";
+            subTopicChoices[3] = "Templates and STL";
+            subTopicChoices[4] = "Design Patterns";
+        }
+        else if (course.getCourseName() == "English")
+        {
+            subTopicChoices[0] = "Grammar and Punctuation";
+            subTopicChoices[1] = "Reading Comprehension";
+            subTopicChoices[2] = "Writing Skills";
+            subTopicChoices[3] = "Literature Analysis";
+            subTopicChoices[4] = "Vocabulary and Spelling";
+        }
+        else if (course.getCourseName() == "Communications")
+        {
+            subTopicChoices[0] = "Interpersonal Communication";
+            subTopicChoices[1] = "Group Communication";
+            subTopicChoices[2] = "Nonverbal Communication";
+            subTopicChoices[3] = "Conflict Resolution";
+            subTopicChoices[4] = "Public Speaking";
+        }
+        else if (course.getCourseName() == "Calculus 1")
+        {
+            subTopicChoices[0] = "Limits and Continuity";
+            subTopicChoices[1] = "Differentiation";
+            subTopicChoices[2] = "Applications of Differentiation";
+            subTopicChoices[3] = "Integration";
+            subTopicChoices[4] = "Applications of Integration";
+        }
+        else if (course.getCourseName() == "Calculus 2")
+        {
+            subTopicChoices[0] = "Techniques of Integration";
+            subTopicChoices[1] = "Applications of Integration";
+            subTopicChoices[2] = "Infinite Series";
+            subTopicChoices[3] = "Power Series";
+            subTopicChoices[4] = "Parametric Equations and Polar Coordinates";
+        }
+        else if (course.getCourseName() == "Chemistry")
+        {
+            subTopicChoices[0] = "Introduction to Chemistry";
+            subTopicChoices[1] = "Organic Chemistry";
+            subTopicChoices[2] = "Physical Chemistry";
+            subTopicChoices[3] = "Analytical Chemistry";
+            subTopicChoices[4] = "Inorganic Chemistry";
+        }
+        else if (course.getCourseName() == "Health")
+        {
+            subTopicChoices[0] = "Anatomy and Physiology";
+            subTopicChoices[1] = "Health Education";
+            subTopicChoices[2] = "Nutrition";
+            subTopicChoices[3] = "First Aid and CPR";
+            subTopicChoices[4] = "Fitness and Exercise";
+        }
+
+        for (int i = 0; i < 5; i++)
+        {
+            cout << i + 1 << ". " << subTopicChoices[i] << endl;
+        }
+
+        int subChoice;
+        cin >> subChoice;
+        subChoice--;
+
+        if (subChoice < 0 || subChoice >= 5)
+        {
+            cout << "Invalid choice. Please choose a number between 1 and 5." << endl;
+            return;
+        }
+
+        course.setSubTopic(subTopicChoices[subChoice]);
+        course.addContent();
+    }
+
+    void enrollStudent()
+    {
+        string studentName;
+        cout << "Enter the name of the student: ";
+        cin >> studentName;
+        students.push_back(StudentInstructor(studentName));
+        cout << "Enrolled student " << studentName << " in course " << course.getCourseName() << endl;
+    }
+
+    void assignAssignment()
+    {
+        string assignment;
+        cout << "Enter the assignment to assign: ";
+        cin.ignore();
+        getline(cin, assignment);
+        for (auto &student : students)
+        {
+            student.submitAssignment(assignment);
+            cout << "Assigned " << assignment << " to student " << student.getName() << endl;
+        }
+    }
+
+    void gradeAssignment()
+    {
+        string assignment;
+        string studentName;
+        string grade;
+        cout << "Enter the name of the student: ";
+        cin >> studentName;
+        cout << "Enter the assignment to grade: ";
+        cin.ignore();
+        getline(cin, assignment);
+        cout << "Enter the grade for " << assignment << ": ";
+        cin >> grade;
+
+        for (auto &student : students)
+        {
+            if (student.getName() == studentName)
+            {
+                student.receiveGrade(assignment, grade);
+                return;
+            }
+        }
+        cout << "Student not found." << endl;
+    }
+
+    void viewStudentProgress()
+    {
+        cout << "Course: " << course.getCourseName() << " - " << course.getSubTopic() << endl;
+        for (auto &student : students)
+        {
+            cout << "Student: " << student.getName() << endl;
+            cout << "Assignments submitted: " << endl;
+            for (size_t i = 0; i < student.getAssignments().size(); ++i)
+            {
+                cout << " - " << student.getAssignments()[i] << " - Grade: " << student.getGrades()[i] << endl;
+            }
+            cout << endl;
+        }
+    }
+};
+
+int mainInstructor()
+{
+    Instructor instructor;
+    string instructorName;
+    cout << "Enter your name: ";
+    cin >> instructorName;
+    instructor.setName(instructorName);
+
+    while (true)
+    {
+        cout << "\nChoose an option:\n";
+        cout << "1. Create Course Content\n";
+        cout << "2. Enroll Student\n";
+        cout << "3. Assign Assignment\n";
+        cout << "4. Grade Assignment\n";
+        cout << "5. View Student Progress\n";
+        cout << "6. Exit\n";
+        cout << "Enter your choice: ";
+        int choice;
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            instructor.createCourseContent();
+            break;
+        case 2:
+            instructor.enrollStudent();
+            break;
+        case 3:
+            instructor.assignAssignment();
+            break;
+        case 4:
+            instructor.gradeAssignment();
+            break;
+        case 5:
+            instructor.viewStudentProgress();
+            break;
+        case 6:
+            cout << "Exiting program.\n";
+            return 0;
+        default:
+            cout << "Invalid choice. Please enter a number between 1 and 6.\n";
+        }
+    }
+
+    return 0;
+}
