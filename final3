@@ -1,0 +1,467 @@
+// final 3
+
+void Student::browseCourses(const CourseStudent courses[], int numCourses)
+{
+    cout << "Available Courses:" << endl;
+    for (int i = 0; i < numCourses; ++i)
+    {
+        cout << i + 1 << ". ";
+        courses[i].displayDetails();
+    }
+
+    cout << "Enter the number of the course you want to enroll in: ";
+    cin >> choicequiz;
+    if (choicequiz >= 1 && choicequiz <= numCourses)
+    {
+        enrollCourse(courses[choicequiz - 1]);
+    }
+    else
+    {
+        cout << "Invalid choice. Please try again." << endl;
+    }
+}
+
+void Student::enrollCourse(const CourseStudent &course)
+{
+    cout << getUsername() << " enrolled in course: " << course.getCourseName() << endl;
+}
+
+void Student::accessCourseMaterial(const CourseMaterial materials[], int numMaterials)
+{
+    cout << "Available Course Materials:" << endl;
+    for (int i = 0; i < numMaterials; ++i)
+    {
+        cout << i + 1 << ". " << materials[i].title << endl;
+    }
+
+    int choice;
+    cout << "Enter the number of the material you want to access: ";
+    cin >> choice;
+
+    if (choice >= 1 && choice <= numMaterials)
+    {
+        cout << "\n** " << materials[choice - 1].title << " **" << endl;
+        cout << materials[choice - 1].content << endl;
+    }
+    else
+    {
+        cout << "Invalid choice. Please try again." << endl;
+    }
+}
+
+void Student::participateInSession(const CourseSession sessions[], int numSessions)
+{
+    cout << "Available Class Sessions:" << endl;
+    for (int i = 0; i < numSessions; ++i)
+    {
+        cout << i + 1 << ". " << sessions[i].topic << " - " << sessions[i].instructor << endl;
+    }
+
+    int choice;
+    cout << "Enter the number of the session you want to attend: ";
+    cin >> choice;
+
+    if (choice >= 1 && choice <= numSessions)
+    {
+        cout << "\n** Participating in class session: " << sessions[choice - 1].topic << " **" << endl;
+        cout << "Instructor: " << sessions[choice - 1].instructor << endl;
+        cout << "(Simulate class participation here, e.g., asking questions, taking notes)" << endl;
+    }
+    else
+    {
+        cout << "Invalid choice. Please try again." << endl;
+    }
+}
+
+void Student::takeQuiz(int choicequiz)
+{
+    // Function prototypes
+    // void quizselection(int choice);
+    void cs101quiz();
+    void cs112quiz();
+    void mt101quiz();
+    void mt102quiz();
+    void hm101quiz();
+    void hm102quiz();
+    void ch101quiz();
+    void ch161quiz();
+    void es111quiz();
+
+    // Function definitions
+    // void quizselection(int option) {
+    switch (choicequiz)
+    {
+    case 1:
+        cs101quiz();
+        break;
+    case 2:
+        cs112quiz();
+        break;
+    case 3:
+        mt101quiz();
+        break;
+    case 4:
+        mt102quiz();
+        break;
+    case 5:
+        hm101quiz();
+        break;
+    case 6:
+        hm102quiz();
+        break;
+    case 7:
+        ch101quiz();
+        break;
+    case 8:
+        ch161quiz();
+        break;
+    case 9:
+        es111quiz();
+        break;
+    default:
+        cout << "Invalid choice!" << endl;
+        break;
+    }
+    quizzes++;
+    checkCertification();
+}
+void Student::displayProgress()
+{
+    cout << "Progress of " << name << ":" << endl;
+    cout << "Exams taken: " << quizzes << endl;
+    cout << "Assignments submitted: " << assignments << endl;
+    // cout << "Exams taken: " << exams << endl;
+    if (certified)
+        cout << "Certified: Yes" << endl;
+    else
+        cout << "Certified: No" << endl;
+}
+void cs101quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Basic Computer Science Quiz ---" << endl;
+    cout << "Q1. What is a compiler?" << endl;
+    cout << "a) Program that translates source code into machine language" << endl;
+    cout << "b) Program that executes machine language instructions" << endl;
+    cout << "c) Program that optimizes code for better performance" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is a variable?" << endl;
+    cout << "a) Container that holds a value" << endl;
+    cout << "b) Control structure" << endl;
+    cout << "c) Loop statement" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void Student::checkCertification()
+{
+    if (quizzes >= 3 && assignments >= 5 && exams >= 1)
+    {
+        certified = true;
+        cout << "Congratulations, " << name << "! You are certified." << endl;
+    }
+}
+
+void cs112quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Object-Oriented Programming (OOP) Quiz ---" << endl;
+    cout << "Q1. What is encapsulation?" << endl;
+    cout << "a) Combining data and methods that operate on the data into a single unit" << endl;
+    cout << "b) Ability of an object to take many forms" << endl;
+    cout << "c) Restricting access to certain parts of an object" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is inheritance?" << endl;
+    cout << "a) Mechanism by which one class acquires the properties and behavior of another class" << endl;
+    cout << "b) Hiding the complexity of a task by providing a simpler interface" << endl;
+    cout << "c) Passing data between different objects" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "a")
+    {
+        cout << "Correct answers! You passed the quiz!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void mt101quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Mathematics Quiz ---" << endl;
+    cout << "Q1. What is the value of pi (p)?" << endl;
+    cout << "a) 3.14" << endl;
+    cout << "b) 3.1416" << endl;
+    cout << "c) 3.14159265358979323846" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is the Pythagorean theorem?" << endl;
+    cout << "a) a  = b  + c " << endl;
+    cout << "b) a + b = c" << endl;
+    cout << "c) a   b = c" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "c" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void mt102quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Calculus 2 Quiz ---" << endl;
+    cout << "Q1. What is an integral?" << endl;
+    cout << "a) A mathematical operation that finds the product of two numbers" << endl;
+    cout << "b) A mathematical operation that finds the area under a curve" << endl;
+    cout << "c) A mathematical operation that finds the slope of a curve" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is the integral of 2x with respect to x?" << endl;
+    cout << "a) x^2" << endl;
+    cout << "b) 2x^2" << endl;
+    cout << "c) x" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "b" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void hm101quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- English Quiz ---" << endl;
+    cout << "Q1. What is a verb?" << endl;
+    cout << "a) A word that describes an action, state, or occurrence" << endl;
+    cout << "b) A word that names a person, place, thing, or idea" << endl;
+    cout << "c) A word that describes a noun" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is a simile?" << endl;
+    cout << "a) Figure of speech in which a word or phrase is applied to an object or action" << endl;
+    cout << "b) Figure of speech involving the comparison of one thing with another thing of a different kind" << endl;
+    cout << "c) Figure of speech in which a term or phrase is applied to something to which it is not literally applicable" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "b")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void hm102quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Communications Quiz ---" << endl;
+    cout << "Q1. What is the primary function of communication?" << endl;
+    cout << "a) To transmit information and share ideas" << endl;
+    cout << "b) To entertain people" << endl;
+    cout << "c) To manipulate others" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is active listening?" << endl;
+    cout << "a) Listening with full attention, fully concentrating on what is being said" << endl;
+    cout << "b) Listening only to respond rather than understand" << endl;
+    cout << "c) Listening passively without engaging with the speaker" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void ch101quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Chemistry Quiz ---" << endl;
+    cout << "Q1. What is an element?" << endl;
+    cout << "a) Substance that cannot be broken down into simpler substances by chemical means" << endl;
+    cout << "b) Substance formed by the chemical combination of two or more elements in definite proportions" << endl;
+    cout << "c) Substance that has physical properties of both metals and nonmetals" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is a molecule?" << endl;
+    cout << "a) Smallest unit of an element that retains the properties of that element" << endl;
+    cout << "b) Smallest unit of a compound that retains the properties of that compound" << endl;
+    cout << "c) Smallest unit of matter that retains the properties of that matter" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "b")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void ch161quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Health Quiz ---" << endl;
+    cout << "Q1. What is the recommended daily intake of water for adults?" << endl;
+    cout << "a) 1 liter" << endl;
+    cout << "b) 2 liters" << endl;
+    cout << "c) 3 liters" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is the main function of carbohydrates in the body?" << endl;
+    cout << "a) Provide energy" << endl;
+    cout << "b) Build muscle" << endl;
+    cout << "c) Regulate body temperature" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "b" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+
+void es111quiz()
+{
+    string answer1, answer2;
+
+    cout << "\n--- Statistics Quiz ---" << endl;
+    cout << "Q1. What is the mean of a dataset?" << endl;
+    cout << "a) Sum of all values / Number of values" << endl;
+    cout << "b) Middle value in a dataset" << endl;
+    cout << "c) Most frequent value in a dataset" << endl;
+    cout << "Your answer: ";
+    cin.ignore();
+    getline(cin, answer1);
+
+    cout << "Q2. What is the standard deviation?" << endl;
+    cout << "a) Measure of the spread of values in a dataset" << endl;
+    cout << "b) Average value in a dataset" << endl;
+    cout << "c) Maximum value in a dataset" << endl;
+    cout << "Your answer: ";
+    getline(cin, answer2);
+
+    // Check answers
+    if (answer1 == "a" && answer2 == "a")
+    {
+        cout << "Correct answers! Well done!" << endl;
+    }
+    else
+    {
+        cout << "Incorrect answers! Better luck next time!" << endl;
+    }
+}
+//******************************
+
+int main()
+{
+    std::cout << "Welcome to the Learning Management System!\n";
+
+    int choice;
+    do
+    {
+        std::cout << "\nChoose an option:\n";
+        std::cout << "1. Admin\n";
+        std::cout << "2. Instructor\n";
+        std::cout << "3. Student\n";
+        std::cout << "4. Exit\n";
+        std::cout << "Enter your choice: ";
+        std::cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+            // Call admin functionality
+            mainadmin();
+            break;
+        case 2:
+            // Call instructor functionality
+            // instructorFunctionality();
+            mainInstructor();
+            break;
+        case 3:
+            // Call student functionality
+            mainStudent();
+            break;
+        case 4:
+            std::cout << "Exiting program.\n";
+            break;
+        default:
+            std::cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+        }
+    } while (choice != 4);
+
+    return 0;
+}
