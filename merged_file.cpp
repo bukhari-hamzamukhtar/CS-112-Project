@@ -26,6 +26,7 @@ public:
     int capacity;
     int enrolled;
     vector<Student> students;
+    vector<string> announcements;
 };
 
 // Function to display the menu for administrators
@@ -33,11 +34,12 @@ void displayAdminMenu() {
     cout << "\n--- Administrator Menu ---" << endl;
     cout << "1. Add a user" << endl;
     cout << "2. Remove a user" << endl;
-    cout << "3. Add a course" << endl;
-    cout << "4. Remove a course" << endl;
-    cout << "5. Display user accounts" << endl;
-    cout << "6. Display course listings" << endl;
-    cout << "7. Exit" << endl;
+    cout << "3. Create a course" << endl;
+    cout << "4. Assign a course to an instructor" << endl;
+    cout << "5. Change course capacity" << endl;
+    cout << "6. Display user accounts" << endl;
+    cout << "7. Display course listings" << endl;
+    cout << "8. Exit" << endl;
 }
 
 // Function to display the menu for instructors
@@ -100,6 +102,10 @@ void saveCourses(const Course courses[], int courseCount) {
                 outFile << student.rollNumber << endl;
                 outFile << student.grade << endl;
             }
+            outFile << courses[i].announcements.size() << endl;
+            for (const auto& announcement : courses[i].announcements) {
+                outFile << announcement << endl;
+            }
         }
         outFile.close();
     } else {
@@ -128,6 +134,14 @@ void loadCourses(Course courses[], int &courseCount) {
                 inFile >> student.grade;
                 inFile.ignore();
                 courses[i].students.push_back(student);
+            }
+            int announcementCount;
+            inFile >> announcementCount;
+            inFile.ignore();
+            for (int k = 0; k < announcementCount; ++k) {
+                string announcement;
+                getline(inFile, announcement);
+                courses[i].announcements.push_back(announcement);
             }
         }
         inFile.close();
@@ -174,8 +188,8 @@ void removeUser(User users[], int &userCount) {
     cout << "User not found." << endl;
 }
 
-// Function to add a course
-void addCourse(Course courses[], int &courseCount) {
+// Function to create a course
+void createCourse(Course courses[], int &courseCount) {
     if (courseCount >= 10) {
         cout << "Cannot add more courses. Maximum limit reached." << endl;
         return;
@@ -184,30 +198,53 @@ void addCourse(Course courses[], int &courseCount) {
     Course newCourse;
     cout << "Enter course title: ";
     getline(cin, newCourse.title);
-    cout << "Enter instructor: ";
-    getline(cin, newCourse.instructor);
-    cout << "Enter capacity: ";
+    cout << "Enter course capacity: ";
     cin >> newCourse.capacity;
     newCourse.enrolled = 0;
+    newCourse.instructor = "Unassigned";
     courses[courseCount++] = newCourse;
     saveCourses(courses, courseCount);
-    cout << "Course added successfully." << endl;
+    cout << "Course created successfully." << endl;
     cin.ignore(); // Clear the input buffer
 }
 
-// Function to remove a course
-void removeCourse(Course courses[], int &courseCount) {
-    string title;
-    cout << "Enter the title of the course to remove: ";
-    getline(cin, title);
+// Function to assign a course to an instructor
+void assignCourseToInstructor(Course courses[], int courseCount, User users[], int userCount) {
+    string courseTitle, instructorUsername;
+    cout << "Enter course title: ";
+    getline(cin, courseTitle);
+    cout << "Enter instructor username: ";
+    getline(cin, instructorUsername);
+
     for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].title == title) {
-            for (int j = i; j < courseCount - 1; ++j) {
-                courses[j] = courses[j + 1];
+        if (courses[i].title == courseTitle) {
+            for (int j = 0; j < userCount; ++j) {
+                if (users[j].username == instructorUsername && users[j].userType == "instructor") {
+                    courses[i].instructor = instructorUsername;
+                    saveCourses(courses, courseCount);
+                    cout << "Course " << courseTitle << " assigned to instructor " << instructorUsername << " successfully." << endl;
+                    return;
+                }
             }
-            courseCount--;
-            saveCourses(courses, courseCount);
-            cout << "Course " << title << " removed successfully." << endl;
+            cout << "Instructor not found or invalid user type." << endl;
+            return;
+        }
+    }
+    cout << "Course not found." << endl;
+}
+
+// Function to change course capacity
+void changeCourseCapacity(Course courses[], int courseCount) {
+    string courseTitle;
+    cout << "Enter course title: ";
+    getline(cin, courseTitle);
+    for (int i = 0; i < courseCount; ++i) {
+        if (courses[i].title == courseTitle) {
+            cout << "Enter new capacity: ";
+            cin >> courses[i].capacity;
+            cin.ignore();
+            saveCourses(courses, courseCount); // Save courses to file
+            cout << "Course capacity updated successfully." << endl;
             return;
         }
     }
@@ -221,7 +258,7 @@ void displayUsers(const User users[], int userCount) {
         cout << "No user accounts found." << endl;
     } else {
         for (int i = 0; i < userCount; ++i) {
-            cout << "Username: " << users[i].username << ", Password: " << users[i].password << ", Type: " << users[i].userType << endl;
+            cout << "Username: " << users[i].username << ", Password: " << users[i].password << ", User Type: " << users[i].userType << endl;
         }
     }
 }
@@ -230,101 +267,124 @@ void displayUsers(const User users[], int userCount) {
 void displayCourses(const Course courses[], int courseCount) {
     cout << "\n--- Course Listings ---" << endl;
     if (courseCount == 0) {
-        cout << "No courses available." << endl;
+        cout << "No courses found." << endl;
     } else {
         for (int i = 0; i < courseCount; ++i) {
-            cout << "Title: " << courses[i].title << ", Instructor: " << courses[i].instructor << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
+            cout << "Course Title: " << courses[i].title << ", Instructor: " << courses[i].instructor << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
+            for (const auto& announcement : courses[i].announcements) {
+                cout << " - Announcement: " << announcement << endl;
+            }
         }
     }
 }
 
-// Function to view instructor's courses
-void viewInstructorCourses(const Course courses[], int courseCount, const string& instructor) {
+// Function for instructor to view their courses
+void viewInstructorCourses(const Course courses[], int courseCount, const string &instructorUsername) {
     cout << "\n--- Your Courses ---" << endl;
     bool found = false;
     for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].instructor == instructor) {
-            cout << "Title: " << courses[i].title << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
+        if (courses[i].instructor == instructorUsername) {
+            cout << "Course Title: " << courses[i].title << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
             found = true;
         }
     }
     if (!found) {
-        cout << "No courses found for you." << endl;
+        cout << "You are not assigned to any courses." << endl;
     }
 }
 
 // Function to add grades for students
-void addGrades(Course courses[], int courseCount, const string& instructor) {
+void addGrades(Course courses[], int courseCount, const string &instructorUsername) {
     string courseTitle;
-    cout << "Enter the title of the course to add grades: ";
+    cout << "Enter course title to add grades: ";
     getline(cin, courseTitle);
     for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].title == courseTitle && courses[i].instructor == instructor) {
-            for (auto& student : courses[i].students) {
-                cout << "Enter grade for " << student.name << " (Roll No: " << student.rollNumber << "): ";
+        if (courses[i].title == courseTitle && courses[i].instructor == instructorUsername) {
+            for (auto &student : courses[i].students) {
+                cout << "Enter grade for " << student.name << " (Roll Number: " << student.rollNumber << "): ";
                 cin >> student.grade;
             }
+            cin.ignore(); // Clear the input buffer
             saveCourses(courses, courseCount); // Save courses to file
             cout << "Grades added successfully." << endl;
             return;
         }
     }
-    cout << "Course not found or you are not the instructor of this course." << endl;
+    cout << "Course not found or you are not the instructor for this course." << endl;
 }
 
 // Function to view enrolled students
-void viewEnrolledStudents(const Course courses[], int courseCount, const string& instructor) {
+void viewEnrolledStudents(const Course courses[], int courseCount, const string &instructorUsername) {
     string courseTitle;
-    cout << "Enter the title of the course to view enrolled students: ";
+    cout << "Enter course title to view enrolled students: ";
     getline(cin, courseTitle);
     for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].title == courseTitle && courses[i].instructor == instructor) {
+        if (courses[i].title == courseTitle && courses[i].instructor == instructorUsername) {
             cout << "\n--- Enrolled Students ---" << endl;
-            for (const auto& student : courses[i].students) {
+            for (const auto &student : courses[i].students) {
                 cout << "Name: " << student.name << ", Roll Number: " << student.rollNumber << ", Grade: " << student.grade << endl;
             }
             return;
         }
     }
-    cout << "Course not found or you are not the instructor of this course." << endl;
+    cout << "Course not found or you are not the instructor for this course." << endl;
 }
 
 // Function to update course information
-void updateCourseInformation(Course courses[], int courseCount, const string& instructor) {
+void updateCourseInfo(Course courses[], int courseCount, const string &instructorUsername) {
     string courseTitle;
-    cout << "Enter the title of the course to update: ";
+    cout << "Enter course title to update information: ";
     getline(cin, courseTitle);
     for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].title == courseTitle && courses[i].instructor == instructor) {
-            cout << "Enter new title: ";
-            getline(cin, courses[i].title);
+        if (courses[i].title == courseTitle && courses[i].instructor == instructorUsername) {
             cout << "Enter new capacity: ";
             cin >> courses[i].capacity;
-            cin.ignore();
+            cin.ignore(); // Clear the input buffer
             saveCourses(courses, courseCount); // Save courses to file
             cout << "Course information updated successfully." << endl;
             return;
         }
     }
-    cout << "Course not found or you are not the instructor of this course." << endl;
+    cout << "Course not found or you are not the instructor for this course." << endl;
 }
 
-// Function to view/send announcements
-void viewSendAnnouncements() {
-    // This function can be implemented as needed.
-    cout << "\n--- Announcements ---" << endl;
-    cout << "This feature is not yet implemented." << endl;
+// Function to view and send announcements
+void viewSendAnnouncements(Course courses[], int courseCount, const string &instructorUsername) {
+    string courseTitle;
+    cout << "Enter course title to view/send announcements: ";
+    getline(cin, courseTitle);
+    for (int i = 0; i < courseCount; ++i) {
+        if (courses[i].title == courseTitle && courses[i].instructor == instructorUsername) {
+            cout << "\n--- Announcements ---" << endl;
+            for (const auto &announcement : courses[i].announcements) {
+                cout << "- " << announcement << endl;
+            }
+            cout << "Do you want to add a new announcement? (yes/no): ";
+            string choice;
+            getline(cin, choice);
+            if (choice == "yes") {
+                string newAnnouncement;
+                cout << "Enter new announcement: ";
+                getline(cin, newAnnouncement);
+                courses[i].announcements.push_back(newAnnouncement);
+                saveCourses(courses, courseCount); // Save courses to file
+                cout << "Announcement added successfully." << endl;
+            }
+            return;
+        }
+    }
+    cout << "Course not found or you are not the instructor for this course." << endl;
 }
 
 // Function to sign up a new user
-void signUp(User users[], int &userCount) {
+void signUp(User users[], int &userCount, Course courses[], int courseCount) {
     addUser(users, userCount);
-    cout << "Please log in with your new credentials." << endl;
+    cout << "Returning to main menu for login." << endl;
 }
 
 // Function to log in a user
-bool logIn(const User users[], int userCount, string &username, string &userType) {
-    string password;
+int logIn(User users[], int userCount) {
+    string username, password;
     cout << "Enter username: ";
     getline(cin, username);
     cout << "Enter password: ";
@@ -332,120 +392,96 @@ bool logIn(const User users[], int userCount, string &username, string &userType
 
     for (int i = 0; i < userCount; ++i) {
         if (users[i].username == username && users[i].password == password) {
-            userType = users[i].userType;
-            return true;
+            return i; // Return the index of the logged-in user
         }
     }
-    return false;
+    return -1; // Return -1 if login fails
 }
 
 int main() {
-    const int max_users = 10;
-    const int max_courses = 10;
-    User users[max_users];
-    Course courses[max_courses];
+    User users[10];
+    Course courses[10];
     int userCount = 0;
     int courseCount = 0;
 
-    // Load users and courses from files
     loadUsers(users, userCount);
     loadCourses(courses, courseCount);
 
-    string username, userType;
-    bool loggedIn = false;
-    int choice;
+    while (true) {
+        cout << "\n--- Main Menu ---" << endl;
+        cout << "1. Sign Up" << endl;
+        cout << "2. Log In" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter choice: ";
+        int choice;
+        cin >> choice;
+        cin.ignore(); // Clear the input buffer
 
-    cout << "1. Sign Up" << endl;
-    cout << "2. Log In" << endl;
-    cout << "Enter your choice: ";
-    cin >> choice;
-    cin.ignore(); // Clear the input buffer
-
-    if (choice == 1) {
-        signUp(users, userCount);
-    } 
-
-    do {
-        loggedIn = logIn(users, userCount, username, userType);
-        if (!loggedIn) {
-            cout << "Invalid username or password. Please try again." << endl;
+        if (choice == 1) {
+            signUp(users, userCount, courses, courseCount);
+        } else if (choice == 2) {
+            int userIndex = logIn(users, userCount);
+            if (userIndex == -1) {
+                cout << "Invalid username or password. Please try again." << endl;
+            } else {
+                if (users[userIndex].userType == "administrator") {
+                    while (true) {
+                        displayAdminMenu();
+                        cout << "Enter choice: ";
+                        int adminChoice;
+                        cin >> adminChoice;
+                        cin.ignore(); // Clear the input buffer
+                        if (adminChoice == 1) {
+                            addUser(users, userCount);
+                        } else if (adminChoice == 2) {
+                            removeUser(users, userCount);
+                        } else if (adminChoice == 3) {
+                            createCourse(courses, courseCount);
+                        } else if (adminChoice == 4) {
+                            assignCourseToInstructor(courses, courseCount, users, userCount);
+                        } else if (adminChoice == 5) {
+                            changeCourseCapacity(courses, courseCount);
+                        } else if (adminChoice == 6) {
+                            displayUsers(users, userCount);
+                        } else if (adminChoice == 7) {
+                            displayCourses(courses, courseCount);
+                        } else if (adminChoice == 8) {
+                            break;
+                        } else {
+                            cout << "Invalid choice. Please try again." << endl;
+                        }
+                    }
+                } else if (users[userIndex].userType == "instructor") {
+                    while (true) {
+                        displayInstructorMenu();
+                        cout << "Enter choice: ";
+                        int instructorChoice;
+                        cin >> instructorChoice;
+                        cin.ignore(); // Clear the input buffer
+                        if (instructorChoice == 1) {
+                            viewInstructorCourses(courses, courseCount, users[userIndex].username);
+                        } else if (instructorChoice == 2) {
+                            addGrades(courses, courseCount, users[userIndex].username);
+                        } else if (instructorChoice == 3) {
+                            viewEnrolledStudents(courses, courseCount, users[userIndex].username);
+                        } else if (instructorChoice == 4) {
+                            updateCourseInfo(courses, courseCount, users[userIndex].username);
+                        } else if (instructorChoice == 5) {
+                            viewSendAnnouncements(courses, courseCount, users[userIndex].username);
+                        } else if (instructorChoice == 6) {
+                            break;
+                        } else {
+                            cout << "Invalid choice. Please try again." << endl;
+                        }
+                    }
+                }
+            }
+        } else if (choice == 3) {
+            break;
+        } else {
+            cout << "Invalid choice. Please try again." << endl;
         }
-    } while (!loggedIn);
-
-    if (userType == "administrator") {
-        int choice_admin;
-        cout << "Welcome, Administrator!" << endl;
-        do {
-            displayAdminMenu();
-            cout << "Enter your choice: ";
-            cin >> choice_admin;
-            cin.ignore(); // Clear the input buffer
-
-            switch (choice_admin) {
-            case 1:
-                addUser(users, userCount);
-                break;
-            case 2:
-                removeUser(users, userCount);
-                break;
-            case 3:
-                addCourse(courses, courseCount);
-                break;
-            case 4:
-                removeCourse(courses, courseCount);
-                break;
-            case 5:
-                displayUsers(users, userCount);
-                break;
-            case 6:
-                displayCourses(courses, courseCount);
-                break;
-            case 7:
-                cout << "Exiting the program." << endl;
-                break;
-            default:
-                cout << "Invalid choice. Please enter a number between 1 and 7." << endl;
-            }
-        } while (choice_admin != 7);
-    } else if (userType == "instructor") {
-        int choice_instructor;
-        cout << "Welcome, Instructor!" << endl;
-        do {
-            displayInstructorMenu();
-            cout << "Enter your choice: ";
-            cin >> choice_instructor;
-            cin.ignore(); // Clear the input buffer
-
-            switch (choice_instructor) {
-            case 1:
-                viewInstructorCourses(courses, courseCount, username);
-                break;
-            case 2:
-                addGrades(courses, courseCount, username);
-                break;
-            case 3:
-                viewEnrolledStudents(courses, courseCount, username);
-                break;
-            case 4:
-                updateCourseInformation(courses, courseCount, username);
-                break;
-            case 5:
-                viewSendAnnouncements();
-                break;
-            case 6:
-                cout << "Exiting the program." << endl;
-                break;
-            default:
-                cout << "Invalid choice. Please enter a number between 1 and 6." << endl;
-            }
-        } while (choice_instructor != 6);
-    } else {
-        cout << "Invalid user type." << endl;
     }
-
-    // Save users and courses to files before exiting
-    saveUsers(users, userCount);
-    saveCourses(courses, courseCount);
 
     return 0;
 }
