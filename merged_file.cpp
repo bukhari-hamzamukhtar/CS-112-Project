@@ -316,6 +316,29 @@ void viewSendAnnouncements() {
     cout << "This feature is not yet implemented." << endl;
 }
 
+// Function to sign up a new user
+void signUp(User users[], int &userCount) {
+    addUser(users, userCount);
+    cout << "Please log in with your new credentials." << endl;
+}
+
+// Function to log in a user
+bool logIn(const User users[], int userCount, string &username, string &userType) {
+    string password;
+    cout << "Enter username: ";
+    getline(cin, username);
+    cout << "Enter password: ";
+    getline(cin, password);
+
+    for (int i = 0; i < userCount; ++i) {
+        if (users[i].username == username && users[i].password == password) {
+            userType = users[i].userType;
+            return true;
+        }
+    }
+    return false;
+}
+
 int main() {
     const int max_users = 10;
     const int max_courses = 10;
@@ -328,27 +351,26 @@ int main() {
     loadUsers(users, userCount);
     loadCourses(courses, courseCount);
 
-    string username, password;
-    cout << "Enter username: ";
-    getline(cin, username);
-    cout << "Enter password: ";
-    getline(cin, password);
-
-    string userType;
+    string username, userType;
     bool loggedIn = false;
+    int choice;
 
-    for (int i = 0; i < userCount; ++i) {
-        if (users[i].username == username && users[i].password == password) {
-            userType = users[i].userType;
-            loggedIn = true;
-            break;
+    cout << "1. Sign Up" << endl;
+    cout << "2. Log In" << endl;
+    cout << "Enter your choice: ";
+    cin >> choice;
+    cin.ignore(); // Clear the input buffer
+
+    if (choice == 1) {
+        signUp(users, userCount);
+    } 
+
+    do {
+        loggedIn = logIn(users, userCount, username, userType);
+        if (!loggedIn) {
+            cout << "Invalid username or password. Please try again." << endl;
         }
-    }
-
-    if (!loggedIn) {
-        cout << "Invalid username or password." << endl;
-        return 0;
-    }
+    } while (!loggedIn);
 
     if (userType == "administrator") {
         int choice_admin;
