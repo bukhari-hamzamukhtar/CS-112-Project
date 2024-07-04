@@ -25,6 +25,12 @@ public:
     vector<string> quizzes;
 };
 
+class Salary {
+public:
+    string username;
+    double amount;
+};
+
 // Function to display the main menu
 void displayMainMenu() {
     cout << "\n--- Main Menu ---" << endl;
@@ -55,15 +61,15 @@ void displayInstructorMenu() {
     cout << "3. View enrolled students" << endl;
     cout << "4. Update course information" << endl;
     cout << "5. Manage announcements" << endl;
-    cout << "6. Log Out" << endl;
+    cout << "6. View salary" << endl;
+    cout << "7. Log Out" << endl;
 }
 
 // Function to load users from a file
 void loadUsers(User users[], int &userCount) {
     ifstream file("users.txt");
     if (file.is_open()) {
-        while (!file.eof() && userCount < 10) {
-            file >> users[userCount].username >> users[userCount].password >> users[userCount].userType;
+        while (file >> users[userCount].username >> users[userCount].password >> users[userCount].userType) {
             userCount++;
         }
         file.close();
@@ -85,8 +91,7 @@ void saveUsers(const User users[], int userCount) {
 void loadCourses(Course courses[], int &courseCount) {
     ifstream file("courses.txt");
     if (file.is_open()) {
-        while (!file.eof() && courseCount < 10) {
-            file >> courses[courseCount].title >> courses[courseCount].instructor >> courses[courseCount].capacity >> courses[courseCount].enrolled;
+        while (file >> courses[courseCount].title >> courses[courseCount].instructor >> courses[courseCount].capacity >> courses[courseCount].enrolled) {
             courseCount++;
         }
         file.close();
@@ -99,6 +104,28 @@ void saveCourses(const Course courses[], int courseCount) {
     if (file.is_open()) {
         for (int i = 0; i < courseCount; ++i) {
             file << courses[i].title << " " << courses[i].instructor << " " << courses[i].capacity << " " << courses[i].enrolled << endl;
+        }
+        file.close();
+    }
+}
+
+// Function to load salaries from a file
+void loadSalaries(Salary salaries[], int &salaryCount) {
+    ifstream file("salaries.txt");
+    if (file.is_open()) {
+        while (file >> salaries[salaryCount].username >> salaries[salaryCount].amount) {
+            salaryCount++;
+        }
+        file.close();
+    }
+}
+
+// Function to save salaries to a file
+void saveSalaries(const Salary salaries[], int salaryCount) {
+    ofstream file("salaries.txt");
+    if (file.is_open()) {
+        for (int i = 0; i < salaryCount; ++i) {
+            file << salaries[i].username << " " << salaries[i].amount << endl;
         }
         file.close();
     }
@@ -234,17 +261,53 @@ void displayCourses(const Course courses[], int courseCount) {
 
 // Function to manage instructor salaries
 void manageSalaries() {
-    cout << "This feature is not yet implemented." << endl;
-}
+    int salaryCount = 0;
+    Salary salaries[10];
+    loadSalaries(salaries, salaryCount);
 
-// Function for instructor to view courses
-void viewCourses(const Course courses[], int courseCount, const string &instructorUsername) {
-    cout << "\n--- Your Courses ---" << endl;
-    for (int i = 0; i < courseCount; ++i) {
-        if (courses[i].instructor == instructorUsername) {
-            cout << "Title: " << courses[i].title << ", Capacity: " << courses[i].capacity << ", Enrolled: " << courses[i].enrolled << endl;
+    int choice;
+    do {
+        cout << "\n--- Manage Salaries ---" << endl;
+        cout << "1. Add/Update Salary" << endl;
+        cout << "2. View Salaries" << endl;
+        cout << "3. Exit" << endl;
+        cout << "Enter your choice: ";
+        cin >> choice;
+        cin.ignore(); // Clear the input buffer
+
+        if (choice == 1) {
+            string username;
+            double amount;
+            cout << "Enter instructor username: ";
+            getline(cin, username);
+            cout << "Enter salary amount: ";
+            cin >> amount;
+            cin.ignore(); // Clear the input buffer
+
+            bool found = false;
+            for (int i = 0; i < salaryCount; ++i) {
+                if (salaries[i].username == username) {
+                    salaries[i].amount = amount;
+                    found = true;
+                    break;
+                }
+            }
+            if (!found && salaryCount < 10) {
+                salaries[salaryCount].username = username;
+                salaries[salaryCount].amount = amount;
+                salaryCount++;
+            }
+            saveSalaries(salaries, salaryCount); // Save salaries to file
+            cout << "Salary added/updated successfully." << endl;
+        } else if (choice == 2) {
+            cout << "\n--- Salaries ---" << endl;
+            for (int i = 0; i < salaryCount; ++i) {
+                cout << "Instructor: " << salaries[i].username << ", Salary: $" << salaries[i].amount << endl;
+            }
+        } else if (choice != 3) {
+            cout << "Invalid choice. Please enter 1, 2, or 3." << endl;
         }
-    }
+    } while (choice != 3);
 }
 
 // Function for instructor to add grades
@@ -321,6 +384,21 @@ void manageAnnouncements(Course courses[], int courseCount, const string &instru
         }
     }
     cout << "Course not found or you are not the instructor for this course." << endl;
+}
+
+// Function for instructor to view salary
+void viewSalary(const string &username) {
+    int salaryCount = 0;
+    Salary salaries[10];
+    loadSalaries(salaries, salaryCount);
+
+    for (int i = 0; i < salaryCount; ++i) {
+        if (salaries[i].username == username) {
+            cout << "Your salary is: $" << salaries[i].amount << endl;
+            return;
+        }
+    }
+    cout << "Salary information not found." << endl;
 }
 
 int main() {
@@ -421,12 +499,15 @@ int main() {
                                     manageAnnouncements(courses, courseCount, username);
                                     break;
                                 case 6:
+                                    viewSalary(username);
+                                    break;
+                                case 7:
                                     cout << "Logging out..." << endl;
                                     break;
                                 default:
-                                    cout << "Invalid choice. Please enter a number between 1 and 6." << endl;
+                                    cout << "Invalid choice. Please enter a number between 1 and 7." << endl;
                             }
-                        } while (instructorChoice != 6);
+                        } while (instructorChoice != 7);
                     } else {
                         cout << "Invalid user type." << endl;
                     }
