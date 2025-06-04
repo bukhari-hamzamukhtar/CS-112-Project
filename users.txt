@@ -1,5 +1,0 @@
-3 hamzamukhtar 12345
-instructor hamzabukhari 123
-administrator hamza 123
-instructor  
-hamza 123 administrator
